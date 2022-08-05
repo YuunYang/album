@@ -1,0 +1,41 @@
+@property --colorFrom {
+  syntax: '<color>';
+  initial-value: rgb(255, 255, 255);
+  inherits: false;
+}
+
+@property --colorTo {
+  syntax: '<color>';
+  initial-value: rgb(255, 255, 255);
+  inherits: false;
+}
+
+
+.container {
+  background: linear-gradient(-70deg, var(--colorFrom), var(--colorTo));
+  transition: --colorFrom 1s, --colorTo 1s;
+}
+
+.main {
+  padding: 2rem 10rem;
+  color: black;
+  .infos {
+    margin-bottom: 2rem;
+    .title {
+      font-size: 2.75rem;
+    }
+    .info {
+      font-size: 1rem;
+      margin-top: 0.5em;
+      color: #00000073;
+    }
+    .comment {
+      margin-top: 2em;
+      font-size: 1.2rem;
+    }
+  }
+  .albums {
+    display: flex;
+    flex-wrap: wrap;
+  }
+}
