@@ -10,9 +10,7 @@ const fetcher = (url: string) => fetch(url, {
   .then((res) => res.json())
   .then(async (data) => {
     if(data?.error?.status === 401) {
-      await getAccessToken()
-      
-      return []
+      await getAccessToken()      
     }
     return data
   });

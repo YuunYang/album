@@ -20,6 +20,10 @@ const Home: NextPage = () => {
   };
 
   React.useEffect(() => {
+    if(data?.error?.status === 401) {
+      mutate()
+      return;
+    }
     const tracks = data?.tracks?.items?.map((item) => item.track) ?? [];
     setAlbums(getAlbumFromTrack(tracks));
   }, [data]);
@@ -41,8 +45,8 @@ const Home: NextPage = () => {
         <div className={styles.infos}>
           <div className={styles.title}>{data?.name}</div>
           <div className={styles.info}>
-            Collect by {data?.owner.display_name} in{" "}
-            <a target="__blank" href={data?.external_urls.spotify}>
+            Collect by {data?.owner?.display_name} in{" "}
+            <a target="__blank" href={data?.external_urls?.spotify}>
               {data?.name}
             </a>
           </div>
