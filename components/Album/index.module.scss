@@ -1,11 +1,16 @@
 .wrapper {
-  width: 20%;
-  min-width: 220px;
+  width: 200px;
   text-align: center;
-  margin-bottom: 18px;
+  margin: 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  &:first-child {
+    margin-left: 0;
+  }
+  &:last-child {
+    margin-right: 0;
+  }
   .cover {
     height: 200px;
     width: 200px;
@@ -39,5 +44,14 @@
     letter-spacing: .075em;
     font-weight: 600;
     color: #b3b3b3;
+  }
+  .comment {
+    position: fixed;
+    padding: 3rem;
+    left: -1px;
+    bottom: -1px;
+    color: #fff;
+    background-color: transparent;
+    background: linear-gradient(45deg, #0000005e, transparent);
   }
 }

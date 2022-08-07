@@ -8,10 +8,13 @@ import Album from "../components/Album";
 import styles from "../styles/Home.module.scss";
 import { Album as AlbumType } from "../types";
 import getAlbumFromTrack from "../utils/getAlbumFromTrack";
+import commentFile from "../comment.md";
+import { markdownToHtml } from "../utils/markdownToHtml";
 
 const Home: NextPage = () => {
   const [albums, setAlbums] = React.useState<AlbumType[]>([]);
   const [color, setColor] = React.useState<number[]>([255, 255, 255]);
+  const [comment, setComment] = React.useState<string>("");
 
   const { data, mutate } = getPlaylist(config.playlist);
 
@@ -20,8 +23,14 @@ const Home: NextPage = () => {
   };
 
   React.useEffect(() => {
-    if(data?.error?.status === 401) {
-      mutate()
+    (async () => {
+      setComment(await markdownToHtml(commentFile));
+    })();
+  }, []);
+
+  React.useEffect(() => {
+    if (data?.error?.status === 401) {
+      mutate();
       return;
     }
     const tracks = data?.tracks?.items?.map((item) => item.track) ?? [];
@@ -31,6 +40,13 @@ const Home: NextPage = () => {
   const containerBgStyle: any = {
     "--colorFrom": `rgb(${[255, 255, 255].join(",")})`,
     "--colorTo": `rgb(${color.join(",")})`,
+  };
+
+  const groupedAlbums = (albums: AlbumType[]): AlbumType[][] => {
+    return albums.reduce(
+      (r: any[], e, i) => (i % 4 ? r[r.length - 1].push(e) : r.push([e])) && r,
+      []
+    );
   };
 
   return (
@@ -51,12 +67,16 @@ const Home: NextPage = () => {
             </a>
           </div>
           <div className={styles.comment}>
-            {config.comment.cn}
+            <div dangerouslySetInnerHTML={{ __html: comment }} />
           </div>
         </div>
         <div className={styles.albums}>
-          {albums.map((album) => (
-            <Album onCoverHover={onCoverHover} key={album.id} album={album} />
+          {groupedAlbums(albums).map((albumGroup, idx) => (
+            <div className={styles.albumWrapper} key={idx}>
+              {albumGroup.map(album => 
+                <Album key={album.id} onCoverHover={onCoverHover} album={album} />
+              )}
+            </div>
           ))}
         </div>
       </main>
