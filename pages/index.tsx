@@ -29,7 +29,7 @@ const Home: NextPage = () => {
   }, []);
 
   React.useEffect(() => {
-    if (data?.error?.status === 401) {
+    if ((data as any)?.error?.status === 401) {
       mutate();
       return;
     }
