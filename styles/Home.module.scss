@@ -14,6 +14,14 @@
 .container {
   background: linear-gradient(-70deg, var(--colorFrom), var(--colorTo));
   transition: --colorFrom 1s, --colorTo 1s;
+  min-height: 100vh;
+  .warning{
+    color: black;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 .main {

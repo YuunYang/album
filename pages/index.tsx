@@ -15,6 +15,7 @@ const Home: NextPage = () => {
   const [albums, setAlbums] = React.useState<AlbumType[]>([]);
   const [color, setColor] = React.useState<number[]>([255, 255, 255]);
   const [comment, setComment] = React.useState<string>("");
+  const [hide, setHide] = React.useState(false)
 
   const { data, mutate } = getPlaylist(config.playlist);
 
@@ -27,6 +28,19 @@ const Home: NextPage = () => {
       setComment(await markdownToHtml(commentFile));
     })();
   }, []);
+
+  React.useEffect(() => {
+    if(typeof window !== "undefined") {
+      const resize = () => {
+        setHide(window.innerWidth < 960)
+      }
+      resize()
+      window.addEventListener('resize', resize)
+      return () => {
+        window.removeEventListener('resize', resize)
+      }
+    }
+  }, [])
 
   React.useEffect(() => {
     if ((data as any)?.error?.status === 401) {
@@ -48,6 +62,14 @@ const Home: NextPage = () => {
       []
     );
   };
+
+  if(hide) {
+    return (
+      <div className={classnames(styles.container)} style={containerBgStyle}>
+        <div className={styles.warning}>Please use desktop browser</div>
+      </div>
+    )
+  }
 
   return (
     <div className={classnames(styles.container)} style={containerBgStyle}>

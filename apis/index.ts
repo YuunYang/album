@@ -20,8 +20,8 @@ export const getPlaylist = (id: string) => {
   return res
 }
 
-export const getAccessToken = () => {
-  fetch("/api/token")
+export const getAccessToken = async () => {
+  await fetch("/api/token")
     .then((res) => res.json())
     .then((data) => {
       sessionStorage.setItem('accessToken', data.access_token)
