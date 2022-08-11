@@ -41,12 +41,12 @@ const Album = (props: Props) => {
   return (
     <div
       className={styles.wrapper}
-      onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
       <div
         className={styles.cover}
+        onClick={onClick}
         style={{ backgroundImage: `url(${cover?.url})` }}
       />
       <div className={styles.artists}>
