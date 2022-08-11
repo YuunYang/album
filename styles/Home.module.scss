@@ -22,10 +22,19 @@
     justify-content: center;
     align-items: center;
   }
+  .player {
+    position: fixed;
+    padding: 2rem;
+    left: -1px;
+    bottom: -1px;
+    color: #fff;
+    background-color: transparent;
+  }
 }
 
 .main {
   padding: 2rem;
+  padding-bottom: 120px;
   max-width: 1200px;
   margin: 0 auto;
   color: black;

@@ -15,13 +15,18 @@ const Home: NextPage = () => {
   const [albums, setAlbums] = React.useState<AlbumType[]>([]);
   const [color, setColor] = React.useState<number[]>([255, 255, 255]);
   const [comment, setComment] = React.useState<string>("");
-  const [hide, setHide] = React.useState(false)
+  const [hide, setHide] = React.useState(false);
+  const [activatedAlbum, setActivatedAlbum] = React.useState<AlbumType>();
 
   const { data, mutate } = getPlaylist(config.playlist);
 
   const onCoverHover = (color: number[]) => {
     setColor(color);
   };
+
+  const onCoverClick = (album: AlbumType) => {
+    setActivatedAlbum(album);
+  }
 
   React.useEffect(() => {
     (async () => {
@@ -30,17 +35,17 @@ const Home: NextPage = () => {
   }, []);
 
   React.useEffect(() => {
-    if(typeof window !== "undefined") {
+    if (typeof window !== "undefined") {
       const resize = () => {
-        setHide(window.innerWidth < 960)
-      }
-      resize()
-      window.addEventListener('resize', resize)
+        setHide(window.innerWidth < 960);
+      };
+      resize();
+      window.addEventListener("resize", resize);
       return () => {
-        window.removeEventListener('resize', resize)
-      }
+        window.removeEventListener("resize", resize);
+      };
     }
-  }, [])
+  }, []);
 
   React.useEffect(() => {
     if ((data as any)?.error?.status === 401) {
@@ -48,8 +53,10 @@ const Home: NextPage = () => {
       return;
     }
     const tracks = data?.tracks?.items?.map((item) => item.track) ?? [];
-    setAlbums(getAlbumFromTrack(tracks));
-  }, [data]);
+    const albums = getAlbumFromTrack(tracks)
+    setAlbums(albums);
+    setActivatedAlbum(albums[0])
+  }, [data, mutate]);
 
   const containerBgStyle: any = {
     "--colorFrom": `rgb(${[255, 255, 255].join(",")})`,
@@ -63,12 +70,12 @@ const Home: NextPage = () => {
     );
   };
 
-  if(hide) {
+  if (hide) {
     return (
       <div className={classnames(styles.container)} style={containerBgStyle}>
         <div className={styles.warning}>Please use desktop browser</div>
       </div>
-    )
+    );
   }
 
   return (
@@ -95,13 +102,31 @@ const Home: NextPage = () => {
         <div className={styles.albums}>
           {groupedAlbums(albums).map((albumGroup, idx) => (
             <div className={styles.albumWrapper} key={idx}>
-              {albumGroup.map(album => 
-                <Album key={album.id} onCoverHover={onCoverHover} album={album} />
-              )}
+              {albumGroup.map((album) => (
+                <Album
+                  key={album.id}
+                  onCoverHover={onCoverHover}
+                  onCoverClick={onCoverClick}
+                  album={album}
+                />
+              ))}
             </div>
           ))}
         </div>
       </main>
+      {activatedAlbum && (
+        <div className={styles.player}>
+          <iframe
+            style={{ borderRadius: 12 }}
+            src={`https://open.spotify.com/embed/album/${activatedAlbum.id}`}
+            width="100%"
+            height="180"
+            frameBorder="0"
+            allowFullScreen={false}
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          ></iframe>
+        </div>
+      )}
     </div>
   );
 };

@@ -5,6 +5,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;
   &:first-child {
     margin-left: 0;
   }
@@ -44,14 +45,5 @@
     letter-spacing: .075em;
     font-weight: 600;
     color: #b3b3b3;
-  }
-  .comment {
-    position: fixed;
-    padding: 3rem;
-    left: -1px;
-    bottom: -1px;
-    color: #fff;
-    background-color: transparent;
-    background: linear-gradient(45deg, #0000005e, transparent);
   }
 }

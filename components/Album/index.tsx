@@ -9,10 +9,11 @@ const colorThief = new ColorThief();
 interface Props {
   album: Album;
   onCoverHover: (color: number[]) => void;
+  onCoverClick: (album: Album) => void;
 }
 
 const Album = (props: Props) => {
-  const { album, onCoverHover } = props;
+  const { album, onCoverHover, onCoverClick } = props;
 
   const cover = album.images.sort((a, b) => b.height - a.height)[0];
   const [isHover, setIsHover] = React.useState(false);
@@ -33,9 +34,14 @@ const Album = (props: Props) => {
     onCoverHover([255, 255, 255]);
   };
 
+  const onClick = () => {
+    onCoverClick(album)
+  }
+
   return (
     <div
       className={styles.wrapper}
+      onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
@@ -58,13 +64,6 @@ const Album = (props: Props) => {
       </div>
       <div className={styles.name}>{album.name}</div>
       <div className={styles.release}>{album.release_date}</div>
-      {/* {isHover && (
-        <div className={styles.comment}>
-          {config?.comment?.[album.id]?.map((comment, idx) => (
-            <p key={idx}>{comment}</p>
-          ))}
-        </div>
-      )} */}
     </div>
   );
 };
