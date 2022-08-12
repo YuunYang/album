@@ -1,7 +1,7 @@
-import { Album } from "../../types";
+import { Album } from "types";
 import styles from "./index.module.scss";
 import ColorThief from "colorthief/dist/color-thief.mjs";
-import config from "../../album-config.json";
+import config from "album-config.json";
 import React from "react";
 
 const colorThief = new ColorThief();

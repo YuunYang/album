@@ -38,6 +38,8 @@
   max-width: 1200px;
   margin: 0 auto;
   color: black;
+  font-family: Crimson Text,Georgia,serif;
+  line-height: 1.4;
   .infos {
     margin-bottom: 2rem;
     animation-name: content;
@@ -45,8 +47,18 @@
     animation-duration: 1s;
     animation-timing-function: ease-in-out;
     animation-iteration-count: 1;
-    line-height: 1.4;
-    font-family: Crimson Text,Georgia,serif;
+    display: flex;
+    .description {
+      margin-left: 1.2rem;
+      .social {
+        margin-top: 1rem;
+        display: flex;
+        .icon {
+          margin-right: 0.75rem;
+          width: 1.3rem;
+        }
+      }
+    }
     .title {
       font-size: 2.75rem;
       font-weight: 500;
@@ -59,10 +71,10 @@
       margin-top: 0.5em;
       color: #00000073;
     }
-    .comment {
-      margin-top: 2em;
-      font-size: 1.1rem;
-    }
+  }
+  .comment {
+    margin-top: 2em;
+    font-size: 1.1rem;
   }
   .albums {
     display: flex;
