@@ -1,7 +1,15 @@
+$img-width: 150px;
+
+$one-items-width: 460px;
+$two-items-width: 680px;
+$three-items-width: 860px;
+$four-items-width: 1050px;
+
 .wrapper {
-  width: 200px;
+  width: 16.7%;
+  max-width: $img-width;
   text-align: center;
-  margin: 18px;
+  margin: calc( (100% - $img-width * 6) / 10 );
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -13,8 +21,8 @@
   }
   .cover {
     cursor: pointer;
-    height: 200px;
-    width: 200px;
+    height: $img-width;
+    width: $img-width;
     border-radius: 2px;
     border: 1px solid #eee;
     box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%), 0 0 0 1px rgb(10 10 10 / 2%);
@@ -45,5 +53,58 @@
     letter-spacing: .075em;
     font-weight: 600;
     color: #b3b3b3;
+  }
+}
+
+@media screen and (max-width: $four-items-width) and (min-width: $three-items-width) {
+  $img-width: 180px;
+  .wrapper {
+    width: 25%;
+    max-width: $img-width;
+    margin: calc( (100% - $img-width * 4) / 6 );
+    .cover {
+      height: $img-width;
+      width: $img-width;
+    }
+  }
+}
+
+@media screen and (max-width: $three-items-width) and (min-width: $two-items-width) {
+  $img-width: 200px;
+  .wrapper {
+    width: 33%;
+    max-width: $img-width;
+    margin: calc( (100% - $img-width * 3) / 4 );
+    .cover {
+      height: $img-width;
+      width: $img-width;
+    }
+  }
+}
+
+@media screen and (max-width: $two-items-width) and (min-width: $one-items-width) {
+  $img-width: 200px;
+  .wrapper {
+    width: 50%;
+    max-width: $img-width;
+    margin: calc( (100% - $img-width * 2) / 2 );
+    .cover {
+      height: $img-width;
+      width: $img-width;
+    }
+  }
+}
+
+@media screen and (max-width: $one-items-width) {
+  $img-width: $one-items-width;
+  .wrapper {
+    width: 100%;
+    max-width: $img-width;
+    margin: 0;
+    .cover {
+      width: 100%;
+      padding-bottom: 100%;
+      max-width: 100%;
+    }
   }
 }

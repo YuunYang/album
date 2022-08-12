@@ -38,31 +38,45 @@
   max-width: 1200px;
   margin: 0 auto;
   color: black;
-  .infos {
-    margin-bottom: 2rem;
+  font-family: Crimson Text,Georgia,serif;
+  line-height: 1.4;
+  .content {
     animation-name: content;
     animation-direction: normal;
     animation-duration: 1s;
     animation-timing-function: ease-in-out;
     animation-iteration-count: 1;
-    line-height: 1.4;
-    font-family: Crimson Text,Georgia,serif;
-    .title {
-      font-size: 2.75rem;
-      font-weight: 500;
-      letter-spacing: 0.2px;
-      -webkit-font-smoothing: subpixel-antialiased;
-      line-height: 34px;
-    }
-    .info {
-      font-size: 1rem;
-      margin-top: 0.5em;
-      color: #00000073;
+    .infos {
+      margin-bottom: 2rem;
+      display: flex;
+      .description {
+        margin-left: 1.2rem;
+        .social {
+          margin-top: 1rem;
+          display: flex;
+          .icon {
+            margin-right: 0.75rem;
+            width: 1.3rem;
+          }
+        }
+      }
+      .title {
+        font-size: 2.75rem;
+        font-weight: 500;
+        letter-spacing: 0.2px;
+        -webkit-font-smoothing: subpixel-antialiased;
+        line-height: 34px;
+      }
+      .info {
+        font-size: 1rem;
+        margin-top: 0.5em;
+        color: #00000073;
+      }
     }
     .comment {
       margin-top: 2em;
       font-size: 1.1rem;
-    }
+    } 
   }
   .albums {
     display: flex;
@@ -71,7 +85,6 @@
     .albumWrapper {
       width: 100%;
       display: flex;
-      justify-content: space-between;
     }
   }
 }

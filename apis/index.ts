@@ -1,6 +1,6 @@
-import { getPlaylistURL } from "../constants/apis";
+import { getPlaylistURL } from "constants/apis";
 import useSWR from 'swr';
-import { GetPlayListRes } from "../types/api";
+import { GetPlayListRes } from "types/api";
 
 const fetcher = (url: string) => fetch(url, {
   headers: {
@@ -15,7 +15,7 @@ const fetcher = (url: string) => fetch(url, {
     return data
   });
 
-export const getPlaylist = (id: string) => {
+export const useGetPlaylist = (id: string) => {
   const res = useSWR<GetPlayListRes>(getPlaylistURL(id), fetcher)
   return res
 }

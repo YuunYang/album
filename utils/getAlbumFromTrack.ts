@@ -1,4 +1,4 @@
-import { Album, Track } from "../types";
+import { Album, Track } from "types";
 
 export default (tracks: Track[]): Album[] => {
   const albums: Album[] = [];
