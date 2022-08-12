@@ -156,6 +156,11 @@ const Home: NextPage = () => {
               </div>
             </div>
           </div>
+          {isMobile && (
+            <div className={styles.alert}>
+              Use desktop browser for better experience.
+            </div>
+          )}
           <div className={styles.comment}>
             <div dangerouslySetInnerHTML={{ __html: comment }} />
           </div>
