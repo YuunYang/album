@@ -14,9 +14,11 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import getIcon from "components/Icon";
 import { getIsMobile } from "utils/common";
+import Toggle from "react-toggle";
+import Moon from 'public/icons/moon.svg'
+import Sun from 'public/icons/sun.svg'
 
 const Home: NextPage = () => {
-  const isMobile = getIsMobile();
   const router = useRouter();
   const { albumId, open } = router.query;
   const [count, setCount] = React.useState(6);
@@ -24,6 +26,8 @@ const Home: NextPage = () => {
   const [color, setColor] = React.useState<number[]>([255, 255, 255]);
   const [comment, setComment] = React.useState<string>("");
   const [activatedAlbum, setActivatedAlbum] = React.useState<AlbumType>();
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [darkMode, setDarkMode] = React.useState(true);
 
   const { data, mutate } = useGetPlaylist(config.playlist);
 
@@ -43,6 +47,11 @@ const Home: NextPage = () => {
     },
     [router]
   );
+
+  React.useEffect(() => {
+    const isMobile = getIsMobile();
+    setIsMobile(isMobile);
+  }, []);
 
   React.useEffect(() => {
     (async () => {
@@ -67,6 +76,8 @@ const Home: NextPage = () => {
         }
       };
       resize();
+      const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      setDarkMode(isDarkMode)
       window.addEventListener("resize", resize);
       return () => {
         window.removeEventListener("resize", resize);
@@ -91,10 +102,18 @@ const Home: NextPage = () => {
     }
   }, [data, mutate, onCoverClick]);
 
+  React.useEffect(() => {
+    if(darkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  }, [darkMode])
+
   const containerBgStyle: any = !isMobile
     ? {
-        "--colorFrom": `rgb(${[255, 255, 255].join(",")})`,
-        "--colorTo": `rgb(${color.join(",")})`,
+        "--colorFrom": `rgb(${darkMode ? [0,0,0] : [255, 255, 255].join(",")})`,
+        "--colorTo": `rgb(${darkMode ? [0,0,0] : color.join(",")})`,
       }
     : {};
 
@@ -193,6 +212,16 @@ const Home: NextPage = () => {
           ></iframe>
         </div>
       )}
+      <label className={styles.darkCheckbox}>
+        <Toggle
+          defaultChecked={darkMode}
+          icons={{
+            unchecked: <Sun />,
+            checked: <Moon />
+          }}
+          onChange={(e) => setDarkMode(e.target.checked)}
+        />
+      </label>
     </div>
   );
 };

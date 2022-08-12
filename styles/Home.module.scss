@@ -1,22 +1,21 @@
 @property --colorFrom {
-  syntax: '<color>';
+  syntax: "<color>";
   initial-value: rgb(255, 255, 255);
   inherits: false;
 }
 
 @property --colorTo {
-  syntax: '<color>';
+  syntax: "<color>";
   initial-value: rgb(255, 255, 255);
   inherits: false;
 }
-
 
 .container {
   background: linear-gradient(-70deg, var(--colorFrom), var(--colorTo));
   transition: --colorFrom 1s, --colorTo 1s;
   min-height: 100vh;
-  .warning{
-    color: black;
+  .warning {
+    color: var(--font-color);
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -27,7 +26,6 @@
     padding: 2rem;
     left: -1px;
     bottom: -1px;
-    color: #fff;
     background-color: transparent;
   }
 }
@@ -37,8 +35,8 @@
   padding-bottom: 120px;
   max-width: 1200px;
   margin: 0 auto;
-  color: black;
-  font-family: Crimson Text,Georgia,serif;
+  color: var(--font-color);
+  font-family: Crimson Text, Georgia, serif;
   line-height: 1.4;
   .content {
     animation-name: content;
@@ -70,7 +68,7 @@
       .info {
         font-size: 1rem;
         margin-top: 0.5em;
-        color: #00000073;
+        color: var(--info-font-color);
       }
     }
     .alert {
@@ -79,11 +77,12 @@
       border-radius: 0.2rem;
       padding: 0.5rem;
       margin-bottom: -0.75rem;
+      color: var(--alert-font-color);
     }
     .comment {
       margin-top: 2em;
       font-size: 1.1rem;
-    } 
+    }
   }
   .albums {
     display: flex;
@@ -93,6 +92,32 @@
       width: 100%;
       display: flex;
     }
+  }
+}
+
+.darkCheckbox {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  :global(.react-toggle-track) {
+    width: 4.5rem;
+    height: 2rem;
+    :global(.react-toggle-track-check) {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+    :global(.react-toggle-track-x) {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+  :global(.react-toggle--checked .react-toggle-thumb) {
+    left: 2.6rem;
+  }
+  :global(.react-toggle-thumb) {
+    top: 0.1rem;
+    width: 1.8rem;
+    height: 1.8rem;
   }
 }
 

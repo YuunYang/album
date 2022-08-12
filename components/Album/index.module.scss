@@ -34,7 +34,7 @@ $four-items-width: 1050px;
     a {
       margin-right: 10px;
       font-size: 1rem;
-      color: #2b2b2b;
+      color: var(--art-font-color);
       font-weight: 700;
     }
     margin-top: 0.7rem;
@@ -43,7 +43,7 @@ $four-items-width: 1050px;
   .name {
     font-size: 1rem;
     font-style: italic;
-    color: #2b2b2b;
+    color: var(--art-font-color);
     margin-bottom: 0.5rem;
     word-wrap: break-word;
   }
