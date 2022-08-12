@@ -10,8 +10,11 @@ import { Album as AlbumType } from "../types";
 import getAlbumFromTrack from "../utils/getAlbumFromTrack";
 import commentFile from "../comment.md";
 import { markdownToHtml } from "../utils/markdownToHtml";
+import { useRouter } from "next/router";
 
 const Home: NextPage = () => {
+  const router = useRouter()
+  const { albumId } = router.query
   const [albums, setAlbums] = React.useState<AlbumType[]>([]);
   const [color, setColor] = React.useState<number[]>([255, 255, 255]);
   const [comment, setComment] = React.useState<string>("");
@@ -24,9 +27,10 @@ const Home: NextPage = () => {
     setColor(color);
   };
 
-  const onCoverClick = (album: AlbumType) => {
+  const onCoverClick = React.useCallback((album: AlbumType) => {
+    router.push(`/?albumId=${album.id}`, undefined, { shallow: true })
     setActivatedAlbum(album);
-  }
+  }, [router])
 
   React.useEffect(() => {
     (async () => {
@@ -55,10 +59,14 @@ const Home: NextPage = () => {
     const tracks = data?.tracks?.items?.map((item) => item.track) ?? [];
     const albums = getAlbumFromTrack(tracks)
     setAlbums(albums);
-    if(!activatedAlbum) {
-      setActivatedAlbum(albums[0])
+    if(!activatedAlbum && albums.length > 0) {
+      let target = albums[0]
+      if(albumId) {
+        target = albums.find(item => item.id === albumId) ?? target
+      }
+      onCoverClick(target)
     }
-  }, [data, mutate]);
+  }, [activatedAlbum, albumId, data, mutate, onCoverClick]);
 
   const containerBgStyle: any = {
     "--colorFrom": `rgb(${[255, 255, 255].join(",")})`,
