@@ -49,17 +49,14 @@ const Home: NextPage = () => {
   );
 
   React.useEffect(() => {
-    const isMobile = getIsMobile();
-    setIsMobile(isMobile);
-  }, []);
-
-  React.useEffect(() => {
     (async () => {
       setComment(await markdownToHtml(commentFile));
     })();
   }, []);
 
   React.useEffect(() => {
+    const isMobile = getIsMobile();
+    setIsMobile(isMobile);
     if (typeof window !== "undefined") {
       const resize = () => {
         const width = window.innerWidth;
@@ -77,7 +74,7 @@ const Home: NextPage = () => {
       };
       resize();
       const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-      setDarkMode(isDarkMode)
+      setDarkMode(isMobile ? isDarkMode : false)
       window.addEventListener("resize", resize);
       return () => {
         window.removeEventListener("resize", resize);
@@ -214,7 +211,7 @@ const Home: NextPage = () => {
       )}
       <label className={styles.darkCheckbox}>
         <Toggle
-          defaultChecked={darkMode}
+          checked={darkMode}
           icons={{
             unchecked: <Sun />,
             checked: <Moon />
