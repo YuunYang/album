@@ -13,26 +13,37 @@ import { markdownToHtml } from "utils/markdownToHtml";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import getIcon from "components/Icon";
+import { getIsMobile } from "utils/common";
+import Toggle from "react-toggle";
+import Moon from 'public/icons/moon.svg'
+import Sun from 'public/icons/sun.svg'
 
 const Home: NextPage = () => {
   const router = useRouter();
-  const { albumId } = router.query;
+  const { albumId, open } = router.query;
+  const [count, setCount] = React.useState(6);
   const [albums, setAlbums] = React.useState<AlbumType[]>([]);
   const [color, setColor] = React.useState<number[]>([255, 255, 255]);
   const [comment, setComment] = React.useState<string>("");
-  const [hide, setHide] = React.useState(false);
   const [activatedAlbum, setActivatedAlbum] = React.useState<AlbumType>();
+  const [isMobile, setIsMobile] = React.useState(false);
+  const [darkMode, setDarkMode] = React.useState(true);
 
   const { data, mutate } = useGetPlaylist(config.playlist);
 
-  const onCoverHover = (color: number[]) => {
+  const onCoverHover = React.useCallback((color: number[]) => {
     setColor(color);
-  };
+  }, []);
 
   const onCoverClick = React.useCallback(
-    (album: AlbumType) => {
-      router.push(`/?albumId=${album.id}`, undefined, { shallow: true });
-      setActivatedAlbum(album);
+    (album: AlbumType, open = true) => {
+      if (albumId !== album.id || !activatedAlbum) {
+        router.push(`/?albumId=${album.id}`, undefined, { shallow: true });
+        setActivatedAlbum(album);
+      }
+      if (isMobile && open) {
+        window.open(`https://open.spotify.com/album/${album.id}`, "_top");
+      }
     },
     [router]
   );
@@ -44,11 +55,26 @@ const Home: NextPage = () => {
   }, []);
 
   React.useEffect(() => {
+    const isMobile = getIsMobile();
+    setIsMobile(isMobile);
     if (typeof window !== "undefined") {
       const resize = () => {
-        setHide(window.innerWidth < 960);
+        const width = window.innerWidth;
+        if (width > 1050) {
+          setCount(6);
+        } else if (width <= 1050 && width > 860) {
+          setCount(4);
+        } else if (width <= 860 && width > 680) {
+          setCount(3);
+        } else if (width <= 680 && width > 460) {
+          setCount(2);
+        } else {
+          setCount(1);
+        }
       };
       resize();
+      const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      setDarkMode(isMobile ? isDarkMode : false)
       window.addEventListener("resize", resize);
       return () => {
         window.removeEventListener("resize", resize);
@@ -69,29 +95,32 @@ const Home: NextPage = () => {
       if (albumId) {
         target = albums.find((item) => item.id === albumId) ?? target;
       }
-      onCoverClick(target);
+      onCoverClick(target, !!open);
     }
-  }, [activatedAlbum, albumId, data, mutate, onCoverClick]);
+  }, [data, mutate, onCoverClick]);
 
-  const containerBgStyle: any = {
-    "--colorFrom": `rgb(${[255, 255, 255].join(",")})`,
-    "--colorTo": `rgb(${color.join(",")})`,
-  };
+  React.useEffect(() => {
+    if(darkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+  }, [darkMode])
 
-  const groupedAlbums = (albums: AlbumType[]): AlbumType[][] => {
+  const containerBgStyle: any = !isMobile
+    ? {
+        "--colorFrom": `rgb(${darkMode ? [0,0,0] : [255, 255, 255].join(",")})`,
+        "--colorTo": `rgb(${darkMode ? [0,0,0] : color.join(",")})`,
+      }
+    : {};
+
+  const groupedAlbums = React.useMemo((): AlbumType[][] => {
     return albums.reduce(
-      (r: any[], e, i) => (i % 4 ? r[r.length - 1].push(e) : r.push([e])) && r,
+      (r: any[], e, i) =>
+        (i % count ? r[r.length - 1].push(e) : r.push([e])) && r,
       []
     );
-  };
-
-  if (hide) {
-    return (
-      <div className={classnames(styles.container)} style={containerBgStyle}>
-        <div className={styles.warning}>Please use desktop browser</div>
-      </div>
-    );
-  }
+  }, [albums, count]);
 
   const cover = data?.images?.sort((a, b) => b.height - a.height)[0];
 
@@ -100,49 +129,60 @@ const Home: NextPage = () => {
       <Head>
         <title>Album Space</title>
         <meta name="description" content="Album Space" />
+        <meta
+          name="split-bill"
+          content="initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, width=device-width"
+        />
         <link rel="icon" href={data?.images?.[0].url ?? "/TheBeatles.ico"} />
       </Head>
 
       <main className={styles.main}>
-        <div className={styles.infos}>
-          <div className={styles.cover}>
-            {cover && (
-              <Image
-                alt="cover"
-                src={cover?.url}
-                height={cover?.height ?? 100}
-                width={cover?.width ?? 100}
-              />
-            )}
-          </div>
-          <div className={styles.description}>
-            <div className={styles.title}>{data?.name}</div>
-            <div className={styles.info}>
-              Collect by {data?.owner?.display_name} in{" "}
-              <a target="__blank" href={data?.external_urls?.spotify}>
-                {data?.name}
-              </a>
-              . {data?.description}
+        <div className={styles.content}>
+          <div className={styles.infos}>
+            <div className={styles.cover}>
+              {cover && (
+                <Image
+                  alt="cover"
+                  src={cover?.url}
+                  height={cover?.height ?? 100}
+                  width={cover?.width ?? 100}
+                />
+              )}
             </div>
-            <div className={styles.social}>
-              {Object.keys(config.social)?.map((type) => {
-                  const Icon = getIcon(type)
-                  return <div className={styles.icon} key={type}>
-                    <a target="_blank" href={config.social[type as keyof typeof config.social]} rel="noreferrer">
-                      <Suspense>
-                      <Icon />
-                    </Suspense>
-                    </a>
-                  </div>
-              })}
+            <div className={styles.description}>
+              <div className={styles.title}>{data?.name}</div>
+              <div className={styles.info}>{data?.description}</div>
+              <div className={styles.social}>
+                {Object.keys(config.social)?.map((type) => {
+                  const Icon = getIcon(type);
+                  return (
+                    <div className={styles.icon} key={type}>
+                      <a
+                        target="_blank"
+                        href={config.social[type as keyof typeof config.social]}
+                        rel="noreferrer"
+                      >
+                        <Suspense>
+                          <Icon />
+                        </Suspense>
+                      </a>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </div>
-        </div>
-        <div className={styles.comment}>
-          <div dangerouslySetInnerHTML={{ __html: comment }} />
+          {isMobile && (
+            <div className={styles.alert}>
+              Use desktop browser for better experience.
+            </div>
+          )}
+          <div className={styles.comment}>
+            <div dangerouslySetInnerHTML={{ __html: comment }} />
+          </div>
         </div>
         <div className={styles.albums}>
-          {groupedAlbums(albums).map((albumGroup, idx) => (
+          {groupedAlbums.map((albumGroup, idx) => (
             <div className={styles.albumWrapper} key={idx}>
               {albumGroup.map((album) => (
                 <Album
@@ -156,7 +196,7 @@ const Home: NextPage = () => {
           ))}
         </div>
       </main>
-      {activatedAlbum && (
+      {activatedAlbum && !isMobile && (
         <div className={styles.player}>
           <iframe
             style={{ borderRadius: 12, border: "2px solid" }}
@@ -169,6 +209,16 @@ const Home: NextPage = () => {
           ></iframe>
         </div>
       )}
+      <label className={styles.darkCheckbox}>
+        <Toggle
+          checked={darkMode}
+          icons={{
+            unchecked: <Sun />,
+            checked: <Moon />
+          }}
+          onChange={(e) => setDarkMode(e.target.checked)}
+        />
+      </label>
     </div>
   );
 };
