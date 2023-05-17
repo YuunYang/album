@@ -2,7 +2,7 @@ import { getPlaylistURL } from "constants/apis";
 import useSWR from 'swr';
 import { GetPlayListRes } from "types/api";
 
-const fetcher = (url: string) => fetch(url, {
+export const fetcher = (url: string) => fetch(url, {
   headers: {
     Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
   }

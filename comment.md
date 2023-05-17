@@ -1,6 +1,4 @@
-I want to record some of my favorite albums here.
-
-Not long ago I found myself is losing interesting to the musics when I was facing thousands of new songs released in one day, I remember the last album I listened carefully was **[1989](https://open.spotify.com/album/1yGbNOtRIgdIiGHOEBaZWf)**, I was listening to this album day after day, I really like it, and I think was lost in the memory, I missing the days when I was immerse in this album when I was young, energetic and have somebody to love.
+I want to record some of my favorite albums here. I remember the first I really enjoy one album is **[1989](https://open.spotify.com/album/1yGbNOtRIgdIiGHOEBaZWf)**. Listening to it brought me back to a time when I was young, full of energy, and surrounded by love, reminding me of why I fell in love with music in the first place.
 
 ```
 25 years my life is still

@@ -9,5 +9,5 @@ export default (tracks: Track[]): Album[] => {
     }
   })
 
-  return albums.sort((a, b) => a.release_date > b.release_date ? 1 : -1);
+  return albums;
 }

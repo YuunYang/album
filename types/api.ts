@@ -23,7 +23,7 @@ export interface GetPlayListRes {
       track: Track;
     }[];
     limit: number;
-    next: null;
+    next: string | null;
     offset: number;
     previous: null;
     total: number;

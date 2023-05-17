@@ -3,7 +3,7 @@ import type { NextPage } from "next";
 import Head from "next/head";
 import React, { Suspense } from "react";
 import config from "album-config.json";
-import { useGetPlaylist } from "apis";
+import { fetcher, useGetPlaylist } from "apis";
 import Album from "components/Album";
 import styles from "styles/Home.module.scss";
 import { Album as AlbumType } from "types";
@@ -17,12 +17,14 @@ import { getIsMobile } from "utils/common";
 import Toggle from "react-toggle";
 import Moon from 'public/icons/moon.svg'
 import Sun from 'public/icons/sun.svg'
+import { GetPlayListRes } from "types/api";
 
 const Home: NextPage = () => {
   const router = useRouter();
   const { albumId, open } = router.query;
   const [count, setCount] = React.useState(6);
   const [albums, setAlbums] = React.useState<AlbumType[]>([]);
+  const [next, setNext] = React.useState('');
   const [color, setColor] = React.useState<number[]>([255, 255, 255]);
   const [comment, setComment] = React.useState<string>("");
   const [activatedAlbum, setActivatedAlbum] = React.useState<AlbumType>();
@@ -90,6 +92,7 @@ const Home: NextPage = () => {
     const tracks = data?.tracks?.items?.map((item) => item.track) ?? [];
     const albums = getAlbumFromTrack(tracks);
     setAlbums(albums);
+    setNext(data?.tracks?.next || '');
     if (!activatedAlbum && albums.length > 0) {
       let target = albums[0];
       if (albumId) {
@@ -105,17 +108,25 @@ const Home: NextPage = () => {
     } else {
       document.documentElement.setAttribute('data-theme', 'light');
     }
-  }, [darkMode])
+  }, [darkMode]);
 
-  const containerBgStyle: any = !isMobile
-    ? {
-        "--colorFrom": `rgb(${darkMode ? [0,0,0] : [255, 255, 255].join(",")})`,
-        "--colorTo": `rgb(${darkMode ? [0,0,0] : color.join(",")})`,
+  React.useEffect(() => {
+    if(!next) return;
+    fetcher(next).then((data: GetPlayListRes['tracks']) => {
+      setAlbums((pre) => [...pre, ...getAlbumFromTrack(data?.items?.map((item) => item.track))]);
+      if(data.next) {
+        setNext(data.next)
       }
-    : {};
+    })
+  }, [next])
+
+  const containerBgStyle: any = {
+    "--colorFrom": `rgb(${darkMode ? [0,0,0] : (!isMobile ? [255, 255, 255] : color).join(",")})`,
+    "--colorTo": `rgb(${darkMode ? [0,0,0] : color.join(",")})`,
+  };
 
   const groupedAlbums = React.useMemo((): AlbumType[][] => {
-    return albums.reduce(
+    return albums.sort((a, b) => a.release_date > b.release_date ? 1 : -1).reduce(
       (r: any[], e, i) =>
         (i % count ? r[r.length - 1].push(e) : r.push([e])) && r,
       []
@@ -123,6 +134,7 @@ const Home: NextPage = () => {
   }, [albums, count]);
 
   const cover = data?.images?.sort((a, b) => b.height - a.height)[0];
+  
 
   return (
     <div className={classnames(styles.container)} style={containerBgStyle}>
