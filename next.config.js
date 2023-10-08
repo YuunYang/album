@@ -3,7 +3,13 @@ const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
   images: {
-    domains: ['i.scdn.co'],
+    domains: ['image-cdn-fa.spotifycdn.com'],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
   },
   webpack: (config) => {
     config.module.rules.push({

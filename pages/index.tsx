@@ -24,7 +24,7 @@ const Home: NextPage = () => {
   const { albumId, open } = router.query;
   const [count, setCount] = React.useState(6);
   const [albums, setAlbums] = React.useState<AlbumType[]>([]);
-  const [next, setNext] = React.useState('');
+  const [next, setNext] = React.useState<string | null>('');
   const [color, setColor] = React.useState<number[]>([255, 255, 255]);
   const [comment, setComment] = React.useState<string>("");
   const [activatedAlbum, setActivatedAlbum] = React.useState<AlbumType>();
@@ -89,9 +89,11 @@ const Home: NextPage = () => {
       mutate();
       return;
     }
-    const tracks = data?.tracks?.items?.map((item) => item.track) ?? [];
-    const albums = getAlbumFromTrack(tracks);
-    setAlbums(albums);
+    if(!albums.length) {
+      const tracks = data?.tracks?.items?.map((item) => item.track) ?? [];
+      const albums = getAlbumFromTrack(tracks);
+      setAlbums(albums);
+    }
     setNext(data?.tracks?.next || '');
     if (!activatedAlbum && albums.length > 0) {
       let target = albums[0];
