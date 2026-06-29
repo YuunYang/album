@@ -1,110 +1,113 @@
-$img-width: 150px;
-
-$one-items-width: 460px;
-$two-items-width: 680px;
-$three-items-width: 860px;
-$four-items-width: 1050px;
-
 .wrapper {
-  width: 16.7%;
-  max-width: $img-width;
-  text-align: center;
-  margin: calc( (100% - $img-width * 6) / 10 );
   display: flex;
   flex-direction: column;
   align-items: center;
-  &:first-child {
-    margin-left: 0;
-  }
-  &:last-child {
-    margin-right: 0;
-  }
-  .cover {
-    cursor: pointer;
-    height: $img-width;
-    width: $img-width;
-    border-radius: 2px;
-    border: 1px solid #eee;
-    box-shadow: 0 0.5em 1em -0.125em rgb(10 10 10 / 10%), 0 0 0 1px rgb(10 10 10 / 2%);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-  }
-  .artists {
-    a {
-      margin-right: 10px;
-      font-size: 1rem;
-      color: var(--art-font-color);
-      font-weight: 700;
-    }
-    margin-top: 0.7rem;
-    margin-bottom: 0.7rem;
-  }
-  .name {
-    font-size: 1rem;
-    font-style: italic;
-    color: var(--art-font-color);
-    margin-bottom: 0.5rem;
-    word-wrap: break-word;
-  }
-  .release {
-    text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: .075em;
-    font-weight: 600;
-    color: #b3b3b3;
-  }
-}
+  cursor: pointer;
 
-@media screen and (max-width: $four-items-width) and (min-width: $three-items-width) {
-  $img-width: 180px;
-  .wrapper {
-    width: 25%;
-    max-width: $img-width;
-    margin: calc( (100% - $img-width * 4) / 6 );
-    .cover {
-      height: $img-width;
-      width: $img-width;
-    }
-  }
-}
-
-@media screen and (max-width: $three-items-width) and (min-width: $two-items-width) {
-  $img-width: 200px;
-  .wrapper {
-    width: 33%;
-    max-width: $img-width;
-    margin: calc( (100% - $img-width * 3) / 4 );
-    .cover {
-      height: $img-width;
-      width: $img-width;
-    }
-  }
-}
-
-@media screen and (max-width: $two-items-width) and (min-width: $one-items-width) {
-  $img-width: 200px;
-  .wrapper {
-    width: 50%;
-    max-width: $img-width;
-    margin: calc( (100% - $img-width * 2) / 2 );
-    .cover {
-      height: $img-width;
-      width: $img-width;
-    }
-  }
-}
-
-@media screen and (max-width: $one-items-width) {
-  $img-width: $one-items-width;
-  .wrapper {
+  .coverContainer {
+    position: relative;
     width: 100%;
-    max-width: $img-width;
-    margin: 0;
+    aspect-ratio: 1;
+    border-radius: 4px;
+    overflow: hidden;
+
     .cover {
       width: 100%;
-      padding-bottom: 100%;
-      max-width: 100%;
+      height: 100%;
+      background-repeat: no-repeat;
+      background-size: cover;
+      background-position: center;
+      border-radius: 4px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 12px rgba(10, 10, 10, 0.15);
     }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+
+      .playIcon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform: scale(0.85);
+        transition: transform 0.2s ease;
+
+        &::after {
+          content: '';
+          display: block;
+          width: 0;
+          height: 0;
+          border-style: solid;
+          border-width: 8px 0 8px 14px;
+          border-color: transparent transparent transparent #111;
+          margin-left: 3px;
+        }
+      }
+    }
+
+    &:hover .overlay {
+      opacity: 1;
+    }
+
+    &:hover .cover {
+      transform: scale(1.03);
+    }
+
+    &:hover .playIcon {
+      transform: scale(1);
+    }
+  }
+
+  &.active .coverContainer .cover {
+    box-shadow: 0 0 0 3px #1db954, 0 4px 16px rgba(29, 185, 84, 0.3);
+  }
+
+  .artists {
+    margin-top: 0.75rem;
+    margin-bottom: 0.4rem;
+    text-align: center;
+
+    a {
+      font-size: 0.9rem;
+      color: var(--art-font-color);
+      font-weight: 700;
+      margin-right: 6px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+
+      &:hover {
+        opacity: 0.7;
+      }
+    }
+  }
+
+  .name {
+    font-size: 0.875rem;
+    font-style: italic;
+    color: var(--art-font-color);
+    margin-bottom: 0.4rem;
+    word-break: break-word;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .release {
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    color: #b3b3b3;
   }
 }

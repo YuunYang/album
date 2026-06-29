@@ -1,0 +1,27 @@
+.toggle {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  cursor: pointer;
+
+  :global(.react-toggle-track) {
+    width: 4.5rem;
+    height: 2rem;
+
+    :global(.react-toggle-track-check),
+    :global(.react-toggle-track-x) {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+  }
+
+  :global(.react-toggle--checked .react-toggle-thumb) {
+    left: 2.6rem;
+  }
+
+  :global(.react-toggle-thumb) {
+    top: 0.1rem;
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+}

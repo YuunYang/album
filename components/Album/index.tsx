@@ -1,66 +1,62 @@
-import { Album } from "types";
-import styles from "./index.module.scss";
-import ColorThief from "colorthief/dist/color-thief.mjs";
-import config from "album-config.json";
-import React from "react";
+import React from 'react';
+import { Album } from 'types';
+import ColorThief from 'colorthief/dist/color-thief.mjs';
+import classnames from 'classnames';
+import styles from './index.module.scss';
 
 const colorThief = new ColorThief();
 
 interface Props {
   album: Album;
+  isActive: boolean;
   onCoverHover: (color: number[]) => void;
   onCoverClick: (album: Album) => void;
 }
 
-const Album = (props: Props) => {
-  const { album, onCoverHover, onCoverClick } = props;
-
+const AlbumCard = ({ album, isActive, onCoverHover, onCoverClick }: Props) => {
   const cover = album.images.sort((a, b) => b.height - a.height)[0];
-  const [isHover, setIsHover] = React.useState(false);
 
   const onMouseEnter = () => {
     const img = new Image();
     img.src = cover?.url;
-    img.crossOrigin = "Anonymous";
-    img.addEventListener("load", function () {
-      const color = colorThief.getColor(img);
-      onCoverHover(color);
+    img.crossOrigin = 'Anonymous';
+    img.addEventListener('load', function () {
+      onCoverHover(colorThief.getColor(img));
     });
-    setIsHover(true);
   };
 
   const onMouseLeave = () => {
-    setIsHover(false);
     onCoverHover([255, 255, 255]);
   };
 
-  const onClick = () => {
-    onCoverClick(album)
-  }
-
   return (
     <div
-      className={styles.wrapper}
+      className={classnames(styles.wrapper, { [styles.active]: isActive })}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
+      onClick={() => onCoverClick(album)}
     >
-      <div
-        className={styles.cover}
-        onClick={onClick}
-        style={{ backgroundImage: `url(${cover?.url})` }}
-      />
+      <div className={styles.coverContainer}>
+        <div
+          className={styles.cover}
+          style={{ backgroundImage: `url(${cover?.url})` }}
+        />
+        <div className={styles.overlay}>
+          <div className={styles.playIcon} />
+        </div>
+      </div>
       <div className={styles.artists}>
-        {album.artists.map((artist) => {
-          return (
-            <a
-              key={artist.id}
-              target="__blank"
-              href={artist.external_urls.spotify}
-            >
-              {artist.name}
-            </a>
-          );
-        })}
+        {album.artists.map(artist => (
+          <a
+            key={artist.id}
+            target="_blank"
+            href={artist.external_urls.spotify}
+            rel="noreferrer"
+            onClick={e => e.stopPropagation()}
+          >
+            {artist.name}
+          </a>
+        ))}
       </div>
       <div className={styles.name}>{album.name}</div>
       <div className={styles.release}>{album.release_date}</div>
@@ -68,4 +64,4 @@ const Album = (props: Props) => {
   );
 };
 
-export default Album;
+export default AlbumCard;
