@@ -1,29 +1,15 @@
-import { getPlaylistURL } from "constants/apis";
-import useSWR from 'swr';
+import useSWR from "swr";
 import { GetPlayListRes } from "types/api";
 
-export const fetcher = (url: string) => fetch(url, {
-  headers: {
-    Authorization: `Bearer ${sessionStorage.getItem('accessToken')}`
-  }
-})
-  .then((res) => res.json())
-  .then(async (data) => {
-    if(data?.error?.status === 401) {
-      await getAccessToken()      
-    }
-    return data
-  });
+// All Spotify calls go through our own backend proxy, which attaches the
+// access token server-side. The browser never handles a token.
+export const fetcher = (url: string) =>
+  fetch(url).then((res) => res.json());
 
 export const useGetPlaylist = (id: string) => {
-  const res = useSWR<GetPlayListRes>(getPlaylistURL(id), fetcher)
-  return res
-}
+  return useSWR<GetPlayListRes>(`/api/playlist/${id}`, fetcher);
+};
 
-export const getAccessToken = async () => {
-  await fetch("/api/token")
-    .then((res) => res.json())
-    .then((data) => {
-      sessionStorage.setItem('accessToken', data.access_token)
-    });
-}
+// Fetch a paginated `next` URL through the proxy.
+export const fetchTracksPage = (nextUrl: string) =>
+  fetcher(`/api/tracks?url=${encodeURIComponent(nextUrl)}`);

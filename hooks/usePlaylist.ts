@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { fetcher, useGetPlaylist } from 'apis';
+import { fetchTracksPage, useGetPlaylist } from 'apis';
 import { Album } from 'types';
 import getAlbumFromTrack from 'utils/getAlbumFromTrack';
 
@@ -8,26 +8,22 @@ export function usePlaylist(playlistId: string) {
   const [nextUrl, setNextUrl] = useState<string | null>(null);
   const initialized = useRef(false);
 
-  const { data, mutate } = useGetPlaylist(playlistId);
+  const { data } = useGetPlaylist(playlistId);
 
   useEffect(() => {
-    if ((data as any)?.error?.status === 401) {
-      mutate();
-      return;
-    }
     if (!data?.tracks?.items || initialized.current) return;
     initialized.current = true;
 
     const tracks = data.tracks.items.map(item => item.track);
     setAlbums(getAlbumFromTrack(tracks));
     setNextUrl(data.tracks.next ?? null);
-  }, [data, mutate]);
+  }, [data]);
 
   useEffect(() => {
     if (!nextUrl) return;
 
     let cancelled = false;
-    fetcher(nextUrl).then((pageData: any) => {
+    fetchTracksPage(nextUrl).then((pageData: any) => {
       if (cancelled) return;
       const newAlbums = getAlbumFromTrack(
         pageData?.items?.map((item: any) => item.track) ?? []
